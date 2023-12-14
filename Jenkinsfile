@@ -21,9 +21,9 @@ pipeline {
         }
         stage('Trivy Scan') {
             steps {
-                sh """
+                sh '''
                 trivy image "${Docker_image}"
-                """
+                '''
             }
         }
         }
