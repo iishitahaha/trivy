@@ -19,7 +19,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'docker --version'
+                sh 'echo ${Docker_image}'
             }
         }
         stage('Trivy Scan') {
