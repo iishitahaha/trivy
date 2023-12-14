@@ -15,7 +15,7 @@ pipeline {
         stage('Docker pull') {
             agent {
                 docker {
-                    image ${Docker_image}
+                    image "${Docker_image}"
                 }
             }
             steps {
