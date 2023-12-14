@@ -18,11 +18,14 @@ pipeline {
                     image ${Docker_image}
                 }
             }
+            steps {
+                sh 'docker --version'
+            }
         }
         stage('Trivy Scan') {
             steps {
                 sh '''
-                trivy image "${Docker_image}"
+                trivy image ${Docker_image}
                 '''
             }
         }
