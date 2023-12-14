@@ -1,18 +1,30 @@
 pipeline {
     agent any
     stages {
-        stage('Configure Docker') {
+        stage('Configure Trivy') {
             steps {
-            sh '''
-            sudo apt update
-            sudo apt-get install docker.io
-            sudo systemctl enable docker.service
-            sudo systemctl start docker.service
-            sudo usermod -aG docker jenkins
-            sudo chmod 666 /var/run/docker.sock
-            '''
+                sh """
+                sudo apt-get install wget apt-transport-https gnupg lsb-release
+                wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+                echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+                sudo apt-get update
+                sudo apt-get install trivy
+                """
+            }
         }
-       }
+        stage('Docker pull') {
+            agent {
+                docker {
+                    image ${Docker_image}
+                }
+            }
+        }
+        stage('Trivy Scan') {
+            steps {
+                sh """
+                trivy image ${Docker_image}
+                """
+            }
+        }
         }
     }
-}
